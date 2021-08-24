@@ -5,12 +5,10 @@ import java.util.HashMap;
 
 public class LZW
 {
-    private int dictionarySize = 256;
-
     public List<Integer> compress(String text) {
-        if(text == null){
+        if(text == null)
             return null;
-        }
+        int dictionarySize = 256;
         List<Integer> result = new ArrayList<Integer>();
         Map<String, Integer> dictionary = new HashMap<String, Integer>();
         for(int i = 0; i < dictionarySize; i++){
@@ -34,5 +32,33 @@ public class LZW
         }
 
         return result;
+    }
+
+    public String decompress(List<Integer> compressed){
+        if(compressed == null)
+            return null;
+        int dictionarySize = 256;
+        StringBuilder result = new StringBuilder();
+        Map<Integer, String> dictionary = new HashMap<Integer, String>();
+        for (int i=0; i<dictionarySize; i++) {
+            dictionary.put(i, "" + (char) i);
+        } 
+        String prev = "" + (char) (int) compressed.remove(0);
+        for(int j : compressed) {
+            String combined;
+            if(dictionary.containsKey(j)) {
+                combined  = dictionary.get(j);
+            }
+            else if(j == dictionarySize) {
+                combined = prev + prev.charAt(0);
+            }
+            else {
+                return "-1";
+            }
+            result.append(combined);
+            dictionary.put(dictionarySize++, prev + combined.charAt(0));
+            prev = combined;
+        }
+        return result.toString();
     }
 }
